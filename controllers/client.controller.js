@@ -8,6 +8,7 @@ const config = require("config");
 const { clientJwtService } = require("../service/jwt.service");
 const { required } = require("joi");
 const Devices = require("../models/devices");
+const { route } = require("../routes/contract.routes");
 
 const register = async (req, res) => {
   try {
@@ -73,6 +74,7 @@ const login = async (req, res) => {
     const payload = {
       id: client.id,
       email: client.email,
+      role: "client",
     };
     const tokens = clientJwtService.generateTokens(payload);
     client.refresh_token = tokens.refreshToken;

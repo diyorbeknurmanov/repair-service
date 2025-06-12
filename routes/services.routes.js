@@ -8,10 +8,17 @@ const {
 
 const services_router = require("express").Router();
 
-services_router.post("/", create);
+const adminJwtGuard = require("../middleware/admin.jwt.guard");
+const { adminGuard } = require("../middleware/guards.guard");
+
+services_router.post("/", adminJwtGuard, adminGuard, create);
+
 services_router.get("/", getAll);
+
 services_router.get("/:id", getOne);
-services_router.patch("/:id", update);
-services_router.delete("/:id", remove);
+
+services_router.patch("/:id", adminJwtGuard, adminGuard, update);
+
+services_router.delete("/:id", adminJwtGuard, adminGuard, remove);
 
 module.exports = services_router;

@@ -62,6 +62,7 @@ const login = async (req, res) => {
     const payload = {
       id: admin.id,
       email: admin.email,
+      role: "admin"
     };
     const tokens = adminJwtService.generateTokens(payload);
     admin.refresh_token = tokens.refreshToken;

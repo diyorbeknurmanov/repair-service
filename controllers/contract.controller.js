@@ -4,13 +4,14 @@ const Devices = require("../models/devices");
 const Owner = require("../models/owner");
 const Services = require("../models/services");
 const Statuses = require("../models/statuses");
-const { Op } = require("sequelize");
+const { Op, fn, col } = require("sequelize");
 
 const {
   contractValidate,
   contractUpdateValidate,
 } = require("../validations/contract.validation");
 const Client = require("../models/clients");
+const Payment = require("../models/payment");
 
 const create = async (req, res) => {
   try {
@@ -334,6 +335,111 @@ const getCancelledClientsByDateRange = async (req, res) => {
   }
 };
 
+const getTopOwnersByServiceName = async (req, res) => {
+  try {
+    const { service_name } = req.body;
+
+    if (!service_name) {
+      return res.status(400).send({ message: "Xizmat nomini yuboring." });
+    }
+
+    // Xizmat nomi orqali xizmatni topamiz
+    const service = await Services.findOne({
+      where: { name: { [Op.iLike]: `%${service_name}%` } },
+    });
+
+    if (!service) {
+      return res.status(404).send({ message: "Xizmat topilmadi." });
+    }
+
+    // Shu xizmatni bajargan eng ko‘p Ownerlar ro‘yxati
+    const topOwners = await Contract.findAll({
+      where: { services_id: service.id }, // E'TIBOR: to‘g‘ri ustun nomi
+      attributes: ["owner_id", [fn("COUNT", col("owner_id")), "count"]],
+      include: [
+        {
+          model: Owner,
+          attributes: ["full_name", "phone", "address"],
+        },
+      ],
+      group: ["owner_id", "owner.id"],
+      order: [[fn("COUNT", col("owner_id")), "DESC"]],
+    });
+
+    if (!topOwners.length) {
+      return res
+        .status(404)
+        .send({ message: "Hech qanday mos owner topilmadi." });
+    }
+
+    res.status(200).send({ topOwners });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ message: "Server xatosi." });
+  }
+};
+
+// const getClientPayments = async (req, res) => {
+//   try {
+//     const { full_name, phone } = req.body;
+
+//     if (!full_name && !phone) {
+//       return res.status(400).send({
+//         message:
+//           "Iltimos, clientni aniqlash uchun 'full_name' yoki 'phone' yuboring.",
+//       });
+//     }
+
+//     // Clientni topamiz
+//     const client = await Client.findOne({
+//       where: {
+//         [Op.or]: [
+//           { full_name: { [Op.iLike]: `%${full_name || ""}%` } },
+//           { phone: { [Op.iLike]: `%${phone || ""}%` } },
+//         ],
+//       },
+//     });
+
+//     if (!client) {
+//       return res.status(404).send({ message: "Client topilmadi." });
+//     }
+
+//     const contracts = await Contract.findAll({
+//       include: [
+//         {
+//           model: Devices,
+//           where: { client_id: client.id },
+//           attributes: [],
+//         },
+//         {
+//           model: Services,
+//           attributes: ["name", "description", "price"],
+//         },
+//         {
+//           model: Owner,
+//           attributes: ["full_name", "phone", "address"],
+//         },
+//         {
+//           model: Payment,
+//           attributes: ["amount", "paid_at", "method"],
+//         },
+//       ],
+//       attributes: ["id", "issue_date", "due_date"],
+//     });
+
+//     if (!contracts.length) {
+//       return res.status(404).send({
+//         message: "Ushbu client uchun contractlar yoki paymentlar topilmadi.",
+//       });
+//     }
+
+//     res.status(200).send({ client, contracts });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).send({ message: "Server xatosi." });
+//   }
+// };
+
 module.exports = {
   create,
   getAll,
@@ -343,4 +449,6 @@ module.exports = {
   getServicesByDateRange,
   getClientsByServiceDateRange,
   getCancelledClientsByDateRange,
+  getTopOwnersByServiceName,
+  // getClientPayments,
 };
