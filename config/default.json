@@ -1,0 +1,32 @@
+{
+  "port": 3000,
+  "db_host": "localhost",
+  "db_username": "postgres",
+  "db_port": 5433,
+  "db_password": "5432",
+  "db_name": "repaier_service",
+
+  "adminAccess_key": "AdminAccessTokenSecretKeyadwqrf",
+  "adminRefresh_key": "AdminRefreshTokenSecretKeyadwqrf",
+  "adminAccess_time": "15h",
+  "adminRefresh_time": "15d",
+  "admin_cookie_refresh_time": 1296000000,
+
+  "clientAccess_key": "clientAccessTokenSecretKeyadwqrf",
+  "clientRefresh_key": "clientRefreshTokenSecretKeyadwqrf",
+  "clientAccess_time": "24h",
+  "clientRefresh_time": "15d",
+  "client_cookie_refresh_time": 1296000000,
+
+  "ownerAccess_key": "ownerAccessTokenSecretKeyadwqrf",
+  "ownerRefresh_key": "ownerRefreshTokenSecretKeyadwqrf",
+  "ownerAccess_time": "24h",
+  "ownerRefresh_time": "15d",
+  "owner_cookie_refresh_time": 1296000000,
+
+  "smtp_password": "iaek pptv zynw jtqe",
+  "smtp_host": "smtp.gmail.com",
+  "smtp_port": 587,
+  "smtp_user": "diyorbeknurmanov678@gmail.com",
+  "api_url": "http://localhost:3000"
+}
