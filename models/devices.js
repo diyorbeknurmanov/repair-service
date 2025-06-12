@@ -25,7 +25,7 @@ const Devices = sequelize.define(
   },
   {
     freezeTableName: true,
-    timestamps: true, // optional: createdAt, updatedAt qo‘shish uchun  
+    timestamps: true, // optional: createdAt, updatedAt qo‘shish uchun
   }
 );
 

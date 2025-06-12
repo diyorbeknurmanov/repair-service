@@ -12,8 +12,15 @@ const create = async (req, res) => {
 
     const { name } = value;
 
+    const existingStatus = await Statuses.findOne({ where: { name } });
+    if (existingStatus) {
+      return res.status(400).send({ message: "Bu status allaqachon mavjud" });
+    }
+
     const newStatus = await Statuses.create({ name });
-    res.status(201).send({ message: "statuses qoshildi", newStatus });
+    res
+      .status(201)
+      .send({ message: "Status muvaffaqiyatli qo'shildi", newStatus });
   } catch (error) {
     sendErrorResponse(error, res);
   }

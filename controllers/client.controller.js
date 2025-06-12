@@ -272,6 +272,7 @@ const refreshToken = async (req, res) => {
     const tokens = clientJwtService.generateTokens(payload);
     client.refresh_token = tokens.refreshToken;
 
+    await client.save();
     res.cookie("refreshToken", tokens.refreshToken, {
       httpOnly: true,
       maxAge: config.get("client_cookie_refresh_time"),
